@@ -7,7 +7,7 @@ import { dijkstra, getShortestPath } from "../../../services/dijkstra.js";
 import {
   VisualizeContext,
   DIJKSTRA,
-  ASTAR
+  ASTAR, BFS, DFS
 } from "../../../context/selectionContext.js";
 import {
   createGrid,
@@ -26,6 +26,7 @@ import {
 import moment from "moment";
 import { aStarSearch } from "../../../services/astar.js";
 import { buildRecursiveMaze } from "../../../services/mazes/recursiveMaze.js";
+import { dfsSearch } from "../../../services/dfs.js";
 
 export default class Grid extends Component {
   constructor(props) {
@@ -230,7 +231,6 @@ export default class Grid extends Component {
     this.animatePath(visitedNodesInOrder, shortestPath, toggleEnable);
   }
 
-  //TODO visualize astar
   visualizeAstar(toggleEnable) {
     
     const { grid, curStartPos, curEndPos } = this.state;
@@ -242,6 +242,19 @@ export default class Grid extends Component {
     this.animatePath(v, shortestPath, toggleEnable);
     /* this.animateShortestPath(shortestPath, toggleEnable); */
   }
+
+  visualizeDFS(toggleEnable) {
+    
+    const { grid, curStartPos, curEndPos } = this.state;
+    const startNode = grid[curStartPos[0]][curStartPos[1]];
+    const endNode = grid[curEndPos[0]][curEndPos[1]];
+
+    const v = dfsSearch(grid, startNode, endNode);
+    const shortestPath = getShortestPath(endNode);
+    this.animatePath(v, shortestPath, toggleEnable);
+    /* this.animateShortestPath(shortestPath, toggleEnable); */
+  }
+
 
   visualizeMaze(toggleMaze) {
     setTimeout(() => {
@@ -333,6 +346,25 @@ export default class Grid extends Component {
             }
           }
         }, 10);
+      }
+      else if (
+        algorithmSelected === BFS
+      ){
+        setTimeout(()=> {
+          toggleEnable();
+        }, 10);
+      }
+      else if (
+        algorithmSelected === DFS
+      ){
+        this.visualizeDFS(toggleEnable);
+      }
+      
+      else{
+        setTimeout(()=> {
+          toggleEnable();
+        }, 10);
+
       }
     } else if (clearBoard) {
       setTimeout(() => {

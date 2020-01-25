@@ -2,6 +2,8 @@ import React from "react";
 
 export const DIJKSTRA = "Dijkstra";
 export const ASTAR = "A*";
+export const BFS = "BFS";
+export const DFS = "DFS";
 
 export const DFSMAZE = "DFSMAZE";
 export const RECURSIVEMAZE = "RECURSIVEMAZE";
