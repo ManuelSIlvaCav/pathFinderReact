@@ -13,6 +13,7 @@ import {
   ASTAR,
   RECURSIVEMAZE
 } from "../../../context/selectionContext";
+import { ButtonGroup, ButtonToolbar } from "react-bootstrap";
 
 export default class TopNavBar extends Component {
   setAlgorithm(selection) {
@@ -83,19 +84,22 @@ function LoadingButton() {
     <VisualizeContext.Consumer>
       {({ algorithmSelected, toggleEnable, enableVisualize }) => {
         return (
-          <Button
-            variant="primary"
-            disabled={enableVisualize}
-            onClick={
-              !enableVisualize
-                ? () => {
-                    handleClick(toggleEnable);
-                  }
-                : null
-            }
-          >
-            {enableVisualize ? "Loading…" : "Run " + algorithmSelected}
-          </Button>
+          <ButtonToolbar>
+            {" "}
+            <Button
+              variant="primary"
+              disabled={enableVisualize}
+              onClick={
+                !enableVisualize
+                  ? () => {
+                      handleClick(toggleEnable);
+                    }
+                  : null
+              }
+            >
+              {enableVisualize ? "Loading…" : "Run " + algorithmSelected}
+            </Button>
+          </ButtonToolbar>
         );
       }}
     </VisualizeContext.Consumer>
@@ -119,9 +123,8 @@ function MazeAndPatterns() {
         return (
           <NavDropdown title={"Mazes & Patterns"} id="basic-nav-dropdown">
             <NavDropdown.Item onSelect={() => toggleMaze(RECURSIVEMAZE)}>
-            Recursive Division
+              Recursive Division
             </NavDropdown.Item>
-            
           </NavDropdown>
         );
       }}

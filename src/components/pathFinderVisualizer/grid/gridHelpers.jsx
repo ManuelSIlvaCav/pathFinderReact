@@ -1,9 +1,9 @@
-export const ROW_COUNT = 25;
-export const COL_COUNT = 51;
+export const ROW_COUNT = 9;
+export const COL_COUNT = 9;
 export const START_NODE_ROW = 5;
 export const START_NODE_COL = 5;
 export const FINISH_NODE_ROW = 5;
-export const FINISH_NODE_COL = 15;
+export const FINISH_NODE_COL = 7;
 
 export const createGrid = () => {
   const grid = [];
