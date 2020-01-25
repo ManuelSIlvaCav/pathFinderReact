@@ -11,6 +11,7 @@ import {
   VisualizeContext,
   DIJKSTRA,
   ASTAR,
+  DFS, BFS,
   RECURSIVEMAZE
 } from "../../../context/selectionContext";
 import { ButtonGroup, ButtonToolbar } from "react-bootstrap";
@@ -31,11 +32,10 @@ export default class TopNavBar extends Component {
             <MazeAndPatterns />
             <LoadingButton />
             <ClearTab />
+            <Nav.Link >Clear Walls</Nav.Link>;
+            <Nav.Link >Clear Path</Nav.Link>;
           </Nav>
-          {/* <Form inline>
-            <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-            <Button variant="outline-success">Search</Button>
-          </Form> */}
+          
         </Navbar.Collapse>
       </Navbar>
     );
@@ -62,12 +62,21 @@ function AlgorithmDropDown() {
             >
               A* Algorithm
             </NavDropdown.Item>
-            <NavDropdown.Item>TODO BFS</NavDropdown.Item>
-            <NavDropdown.Item>TODO DFS</NavDropdown.Item>
-            <NavDropdown.Divider />
-            <NavDropdown.Item href="#action/3.4">
-              Separated link
+            <NavDropdown.Item
+              onSelect={() => {
+                toggleAlgorithm(BFS);
+              }}
+            >
+              BFS
             </NavDropdown.Item>
+            <NavDropdown.Item
+              onSelect={() => {
+                toggleAlgorithm(DFS);
+              }}
+            >
+              DFS
+            </NavDropdown.Item>
+            
           </NavDropdown>
         );
       }}
