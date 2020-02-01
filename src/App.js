@@ -14,14 +14,12 @@ class App extends Component {
     super(props);
 
     this.toggleAlgorithm = algorithm => {
-      
       this.setState(state => ({
         algorithmSelected: algorithm
       }));
     };
 
     this.toggleMaze = maze => {
-      
       this.setState(state => ({
         mazeSelected: maze
       }));
@@ -40,6 +38,18 @@ class App extends Component {
       }));
     };
 
+    this.toggleClearWalls = () => {
+      this.setState(state => ({
+        clearWalls: !state.clearWalls
+      }));
+    };
+
+    this.toggleClearPath = () => {
+      this.setState(state => ({
+        clearPath: !state.clearPath
+      }));
+    };
+
     this.state = {
       algorithmSelected: visualizeState.algorithmSelected,
       enableVisualize: visualizeState.enableVisualize,
@@ -48,7 +58,11 @@ class App extends Component {
       toggleClear: this.toggleClear,
       clearBoard: false,
       mazeSelected: visualizeState.mazeSelected,
-      toggleMaze: this.toggleMaze
+      toggleMaze: this.toggleMaze,
+      clearWalls: false,
+      toggleClearWalls: this.toggleClearWalls,
+      clearPath: false,
+      toggleClearPath: this.toggleClearPath
     };
   }
   render() {

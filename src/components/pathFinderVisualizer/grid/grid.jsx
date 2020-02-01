@@ -7,7 +7,9 @@ import { dijkstra, getShortestPath } from "../../../services/dijkstra.js";
 import {
   VisualizeContext,
   DIJKSTRA,
-  ASTAR, BFS, DFS
+  ASTAR,
+  BFS,
+  DFS
 } from "../../../context/selectionContext.js";
 import {
   createGrid,
@@ -59,8 +61,33 @@ export default class Grid extends Component {
     });
   }
 
+  clearWalls() {
+    const { grid } = this.state;
+    for (let row = 0; row < ROW_COUNT; row++) {
+      for (let col = 0; col < COL_COUNT; col++) {
+        if (
+          grid[row][col].isStart ||
+          grid[row][col].isFinish ||
+          grid[row][col].isVisited
+        )
+          continue;
+        else {
+          if (grid[row][col].isWall) {
+            grid[row][col].isWall = !grid[row][col].isWall;
+            document.getElementById(`node-${row}-${col}`).className =
+              "node node-empty";
+          }
+        }
+      }
+    }
+  }
+
+  clearPath() {
+    
+  }
+
   handleMouseDown(row, col, enableVisualize) {
-    if (enableVisualize || !this.state.available ) return;
+    if (enableVisualize || !this.state.available) return;
     if (this.state.grid[row][col].isStart) {
       //Move start nodes
       this.setState({ mousePressed: true, moveStartNode: true });
@@ -120,7 +147,6 @@ export default class Grid extends Component {
     }
   }
   handleMouseUp() {
-    
     if (this.state.mousePressed)
       this.setState({
         mousePressed: false,
@@ -138,8 +164,7 @@ export default class Grid extends Component {
         grid[row][col].isVisited = false;
         grid[row][col].f = Infinity;
         grid[row][col].g = Infinity;
-        grid[row][col].h = Infinity
-        
+        grid[row][col].h = Infinity;
       }
     }
     var startPos = this.state.curStartPos;
@@ -232,7 +257,6 @@ export default class Grid extends Component {
   }
 
   visualizeAstar(toggleEnable) {
-    
     const { grid, curStartPos, curEndPos } = this.state;
     const startNode = grid[curStartPos[0]][curStartPos[1]];
     const endNode = grid[curEndPos[0]][curEndPos[1]];
@@ -244,7 +268,6 @@ export default class Grid extends Component {
   }
 
   visualizeDFS(toggleEnable) {
-    
     const { grid, curStartPos, curEndPos } = this.state;
     const startNode = grid[curStartPos[0]][curStartPos[1]];
     const endNode = grid[curEndPos[0]][curEndPos[1]];
@@ -255,7 +278,6 @@ export default class Grid extends Component {
     /* this.animateShortestPath(shortestPath, toggleEnable); */
   }
 
-
   visualizeMaze(toggleMaze) {
     setTimeout(() => {
       toggleMaze(null);
@@ -265,7 +287,7 @@ export default class Grid extends Component {
   }
 
   visualizeRecursiveMaze(toggleMaze) {
-    this.setState({available: false});
+    this.setState({ available: false });
     const { grid, curStartPos, curEndPos } = this.state;
     const startNode = grid[curStartPos[0]][curStartPos[1]];
     const endNode = grid[curEndPos[0]][curEndPos[1]];
@@ -280,14 +302,14 @@ export default class Grid extends Component {
     for (let i = 0; i < wallNodes.length; i++) {
       setTimeout(() => {
         getNewGridWithWallsToggle(grid, wallNodes[i].row, wallNodes[i].col);
-        if (!wallNodes[i].isStart && !wallNodes[i].isFinish){
+        if (!wallNodes[i].isStart && !wallNodes[i].isFinish) {
           document.getElementById(
             `node-${wallNodes[i].row}-${wallNodes[i].col}`
           ).className = "node node-wall";
         }
         if (i === wallNodes.length - 1) {
           toggleMaze(null);
-          this.setState({available: true});
+          this.setState({ available: true });
         }
       }, i * 10);
     }
@@ -300,11 +322,18 @@ export default class Grid extends Component {
     toggleClear,
     clearBoard,
     mazeSelected,
-    toggleMaze
+    toggleMaze,
+    clearWalls,
+    toggleClearWalls,
+    clearPath,
+    toggleClearPath
   ) {
     if (!(mazeSelected === null) && this.state.available) {
       setTimeout(() => {
-        this.visualizeRecursiveMaze(toggleMaze);
+        this.clearWalls();
+        setTimeout(() => {
+          this.visualizeRecursiveMaze(toggleMaze);
+        }, 10);
       }, 10);
       return;
     }
@@ -346,30 +375,33 @@ export default class Grid extends Component {
             }
           }
         }, 10);
-      }
-      else if (
-        algorithmSelected === BFS
-      ){
-        setTimeout(()=> {
+      } else if (algorithmSelected === BFS) {
+        setTimeout(() => {
           toggleEnable();
         }, 10);
-      }
-      else if (
-        algorithmSelected === DFS
-      ){
+      } else if (algorithmSelected === DFS) {
         this.visualizeDFS(toggleEnable);
-      }
-      
-      else{
-        setTimeout(()=> {
+      } else {
+        setTimeout(() => {
           toggleEnable();
         }, 10);
-
       }
     } else if (clearBoard) {
       setTimeout(() => {
         toggleClear();
         this.clear();
+      }, 10);
+    } else if (clearPath) {
+      setTimeout(() => {
+        toggleClearPath();
+      }, 10);
+    } else if (clearWalls) {
+      setTimeout(() => {
+        toggleClearWalls();
+        this.clearWalls();
+        this.setState({}, () => {
+          this.reCalculateGrid();
+        });
       }, 10);
     }
   }
@@ -385,7 +417,11 @@ export default class Grid extends Component {
           toggleClear,
           clearBoard,
           mazeSelected,
-          toggleMaze
+          toggleMaze,
+          clearWalls,
+          toggleClearWalls,
+          clearPath,
+          toggleClearPath
         }) => {
           if (this.state.available)
             this.checkState(
@@ -395,7 +431,11 @@ export default class Grid extends Component {
               toggleClear,
               clearBoard,
               mazeSelected,
-              toggleMaze
+              toggleMaze,
+              clearWalls,
+              toggleClearWalls,
+              clearPath,
+              toggleClearPath
             );
           return (
             <table className="grid">

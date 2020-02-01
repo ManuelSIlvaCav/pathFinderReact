@@ -32,8 +32,8 @@ export default class TopNavBar extends Component {
             <MazeAndPatterns />
             <LoadingButton />
             <ClearTab />
-            <Nav.Link >Clear Walls</Nav.Link>;
-            <Nav.Link >Clear Path</Nav.Link>;
+            <ClearWallTab />;
+            <ClearPathTab />;
           </Nav>
           
         </Navbar.Collapse>
@@ -120,6 +120,26 @@ function ClearTab() {
     <VisualizeContext.Consumer>
       {({ toggleClear }) => {
         return <Nav.Link onClick={toggleClear}>Clear Board</Nav.Link>;
+      }}
+    </VisualizeContext.Consumer>
+  );
+}
+
+function ClearWallTab(){
+  return (
+    <VisualizeContext.Consumer>
+      {({ toggleClearWalls }) => {
+        return <Nav.Link onClick={toggleClearWalls}>Clear Walls</Nav.Link>;
+      }}
+    </VisualizeContext.Consumer>
+  );
+}
+
+function ClearPathTab(){
+  return (
+    <VisualizeContext.Consumer>
+      {({ toggleClearPath }) => {
+        return <Nav.Link onClick={toggleClearPath}>Clear Paths</Nav.Link>;
       }}
     </VisualizeContext.Consumer>
   );

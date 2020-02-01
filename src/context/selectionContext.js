@@ -17,7 +17,11 @@ export const visualizeState = {
   completedVisualize: false,
   clearBoard: false,
   mazeSelected: null,
-  toggleMaze: () => {}
+  toggleMaze: () => {},
+  clearWalls: false,
+  toggleClearWalls: () => {},
+  clearPath: false,
+  toggleClearPath: () => {}
 };
 
 export const VisualizeContext = React.createContext(visualizeState);
