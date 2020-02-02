@@ -1,10 +1,6 @@
-import {
-  ROW_COUNT,
-  COL_COUNT
-} from "../../components/pathFinderVisualizer/grid/gridHelpers";
-import { invalid } from "moment";
 
-export function buildRecursiveMaze(grid, startNode, endNode, width, height) {
+
+export function buildRecursiveMaze(grid, startNode, endNode, ROW_COUNT, COL_COUNT) {
   //Paint all the borders
   //call recursive Maze
   var wallsNodeOrder = [];
@@ -53,7 +49,9 @@ function recursiveMaze(
   if (maxCol - minCol < 2 || maxRow - minRow < 2) return;
   const horizontalChance = [0, 1];
   var isHorizontal = Math.floor(Math.random() * horizontalChance.length);
-  if (prevDirection){ isHorizontal = !prevDirection}
+  if (prevDirection) {
+    isHorizontal = !prevDirection;
+  }
   //const isHorizontal =0;
   var pos = selectRandomNode(
     grid,
@@ -279,14 +277,14 @@ function selectRandomOpening(
   var allRange = [];
   var indexPos;
   if (isHorizontal) {
-    for (let i = minCol ; i < maxCol; i++) {
+    for (let i = minCol; i < maxCol; i++) {
       if (i % 2 === 0) continue;
       allRange.push(i);
     }
     indexPos = allRange[Math.floor(Math.random() * allRange.length)];
     return indexPos;
   } else {
-    for (let i = minRow ; i < maxRow; i++) {
+    for (let i = minRow; i < maxRow; i++) {
       if (i % 2 === 0) continue;
       allRange.push(i);
     }
@@ -308,8 +306,6 @@ function validPos(
   prevDirection,
   invalidNode
 ) {
-  
-  
   if (isHorizontal) {
     if (isHorizontal ^ prevDirection) {
       if (row === invalidNode) return false;

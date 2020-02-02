@@ -11,10 +11,13 @@ import {
   VisualizeContext,
   DIJKSTRA,
   ASTAR,
-  DFS, BFS,
-  RECURSIVEMAZE
+  DFS,
+  BFS,
+  RECURSIVEMAZE,
+  SIMPLEMAZE,
+  RANDOMDFS
 } from "../../../context/selectionContext";
-import { ButtonGroup, ButtonToolbar } from "react-bootstrap";
+import {  ButtonToolbar } from "react-bootstrap";
 
 export default class TopNavBar extends Component {
   setAlgorithm(selection) {
@@ -35,7 +38,6 @@ export default class TopNavBar extends Component {
             <ClearWallTab />;
             <ClearPathTab />;
           </Nav>
-          
         </Navbar.Collapse>
       </Navbar>
     );
@@ -76,7 +78,13 @@ function AlgorithmDropDown() {
             >
               DFS
             </NavDropdown.Item>
-            
+            <NavDropdown.Item
+              onSelect={() => {
+                toggleAlgorithm(RANDOMDFS);
+              }}
+            >
+              Random DFS
+            </NavDropdown.Item>
           </NavDropdown>
         );
       }}
@@ -125,7 +133,7 @@ function ClearTab() {
   );
 }
 
-function ClearWallTab(){
+function ClearWallTab() {
   return (
     <VisualizeContext.Consumer>
       {({ toggleClearWalls }) => {
@@ -135,7 +143,7 @@ function ClearWallTab(){
   );
 }
 
-function ClearPathTab(){
+function ClearPathTab() {
   return (
     <VisualizeContext.Consumer>
       {({ toggleClearPath }) => {
@@ -153,6 +161,9 @@ function MazeAndPatterns() {
           <NavDropdown title={"Mazes & Patterns"} id="basic-nav-dropdown">
             <NavDropdown.Item onSelect={() => toggleMaze(RECURSIVEMAZE)}>
               Recursive Division
+            </NavDropdown.Item>
+            <NavDropdown.Item onSelect={() => toggleMaze(SIMPLEMAZE)}>
+              Simple Maze
             </NavDropdown.Item>
           </NavDropdown>
         );

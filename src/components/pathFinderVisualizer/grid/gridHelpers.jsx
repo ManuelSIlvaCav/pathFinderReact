@@ -1,15 +1,14 @@
-export const ROW_COUNT = 9;
-export const COL_COUNT = 9;
+
 export const START_NODE_ROW = 5;
 export const START_NODE_COL = 5;
 export const FINISH_NODE_ROW = 5;
-export const FINISH_NODE_COL = 7;
+export const FINISH_NODE_COL = 15;
 
-export const createGrid = () => {
+export const createGrid = (row_count, col_count) => {
   const grid = [];
-  for (let row = 0; row < ROW_COUNT; row++) {
+  for (let row = 0; row < row_count; row++) {
     const currentRow = [];
-    for (let col = 0; col < COL_COUNT; col++) {
+    for (let col = 0; col < col_count; col++) {
       currentRow.push(createNode(row, col));
     }
     grid.push(currentRow);
@@ -17,7 +16,7 @@ export const createGrid = () => {
   return grid;
 };
 
-export const clearGrid = grid => {
+export const clearGrid = (grid, ROW_COUNT, COL_COUNT) => {
   const newGrid = grid.slice();
   for (let row = 0; row < ROW_COUNT; row++) {
     for (let col = 0; col < COL_COUNT; col++) {

@@ -1,9 +1,4 @@
-import {
-  COL_COUNT,
-  ROW_COUNT
-} from "../components/pathFinderVisualizer/grid/gridHelpers";
-
-export function aStarSearch(grid, startNode, finishNode) {
+export function aStarSearch(grid, startNode, finishNode, ROW_COUNT, COL_COUNT) {
   const openList = [];
   const closedList = [];
   const closedListInOrder = [];
@@ -34,7 +29,7 @@ export function aStarSearch(grid, startNode, finishNode) {
     closedListInOrder.push(currNode);
 
     //North case
-    if (isValid(currNode.row - 1, currNode.col, grid)) {
+    if (isValid(currNode.row - 1, currNode.col, ROW_COUNT, COL_COUNT)) {
       if (isEnding(currNode.row - 1, currNode.col, grid)) {
         foundEnd = true;
         grid[currNode.row - 1][currNode.col].previousNode = currNode;
@@ -67,7 +62,7 @@ export function aStarSearch(grid, startNode, finishNode) {
     }
 
     //South Case
-    if (isValid(currNode.row + 1, currNode.col, grid)) {
+    if (isValid(currNode.row + 1, currNode.col, ROW_COUNT, COL_COUNT)) {
       if (isEnding(currNode.row + 1, currNode.col, grid)) {
         foundEnd = true;
         grid[currNode.row + 1][currNode.col].previousNode = currNode;
@@ -100,7 +95,7 @@ export function aStarSearch(grid, startNode, finishNode) {
     }
 
     //East Case
-    if (isValid(currNode.row, currNode.col + 1, grid)) {
+    if (isValid(currNode.row, currNode.col + 1, ROW_COUNT, COL_COUNT)) {
       if (isEnding(currNode.row, currNode.col + 1, grid)) {
         foundEnd = true;
         grid[currNode.row][currNode.col + 1].previousNode = currNode;
@@ -133,7 +128,7 @@ export function aStarSearch(grid, startNode, finishNode) {
     }
 
     //West Case
-    if (isValid(currNode.row, currNode.col - 1, grid)) {
+    if (isValid(currNode.row, currNode.col - 1, ROW_COUNT, COL_COUNT)) {
       if (isEnding(currNode.row, currNode.col - 1, grid)) {
         foundEnd = true;
         grid[currNode.row][currNode.col - 1].previousNode = currNode;
@@ -166,8 +161,6 @@ export function aStarSearch(grid, startNode, finishNode) {
     }
   }
 
-  
-
   if (!foundEnd) return null;
   else {
     closedListInOrder.push(finishNode);
@@ -175,7 +168,7 @@ export function aStarSearch(grid, startNode, finishNode) {
   }
 }
 
-function isValid(i, j, grid) {
+function isValid(i, j, ROW_COUNT, COL_COUNT) {
   return i >= 0 && j >= 0 && i < ROW_COUNT && j < COL_COUNT ? true : false;
 }
 
