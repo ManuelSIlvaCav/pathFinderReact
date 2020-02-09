@@ -15,9 +15,10 @@ import {
   BFS,
   RECURSIVEMAZE,
   SIMPLEMAZE,
-  RANDOMDFS
+  RANDOMDFS,
+  STAIRCASEMAZE
 } from "../../../context/selectionContext";
-import {  ButtonToolbar } from "react-bootstrap";
+import { ButtonToolbar } from "react-bootstrap";
 
 export default class TopNavBar extends Component {
   setAlgorithm(selection) {
@@ -164,6 +165,9 @@ function MazeAndPatterns() {
             </NavDropdown.Item>
             <NavDropdown.Item onSelect={() => toggleMaze(SIMPLEMAZE)}>
               Simple Maze
+            </NavDropdown.Item>
+            <NavDropdown.Item onSelect={() => toggleMaze(STAIRCASEMAZE)}>
+              Staircase Maze
             </NavDropdown.Item>
           </NavDropdown>
         );

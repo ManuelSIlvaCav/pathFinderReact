@@ -31,7 +31,7 @@ function dfsUtil(grid, node, finishNode, ROW_COUNT, COL_COUNT, isRandom) {
   var curNode;
   var sortedVisistedNodes = [];
   neighbors.push(node);
-  while (neighbors !== 0) {
+  while (neighbors.length !== 0) {
     curNode = neighbors.pop();
     curNode.isVisited = true;
     sortedVisistedNodes.push(curNode);

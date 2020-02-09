@@ -1,7 +1,8 @@
 import React from "react";
 
-import Grid from "./grid/grid.jsx";
+import GridView from "./grid/grid.jsx";
 import TopNavBar from "./navBar/topNavBar.jsx";
+import {DocBar} from './navBar/docBar.jsx';
 import { WindowContext } from "../../context/windowContext.js";
 
 export default function PathFinderVisualizer() {
@@ -11,7 +12,8 @@ export default function PathFinderVisualizer() {
         return (
           <>
             <TopNavBar />
-            <Grid row_count={row_count} col_count={col_count} />
+            <DocBar />
+            <GridView row_count={row_count} col_count={col_count} />
           </>
         );
       }}

@@ -9,6 +9,7 @@ export const RANDOMDFS = "RANDOMDFS";
 export const DFSMAZE = "DFSMAZE";
 export const RECURSIVEMAZE = "RECURSIVEMAZE";
 export const SIMPLEMAZE = "SIMPLEMAZE";
+export const STAIRCASEMAZE = "STAIRMAZE";
 
 export const visualizeState = {
   algorithmSelected: DIJKSTRA,

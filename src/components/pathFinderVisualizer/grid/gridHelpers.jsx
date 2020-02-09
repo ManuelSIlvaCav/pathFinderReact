@@ -1,4 +1,3 @@
-
 export const START_NODE_ROW = 5;
 export const START_NODE_COL = 5;
 export const FINISH_NODE_ROW = 5;
@@ -10,6 +9,31 @@ export const createGrid = (row_count, col_count) => {
     const currentRow = [];
     for (let col = 0; col < col_count; col++) {
       currentRow.push(createNode(row, col));
+    }
+    grid.push(currentRow);
+  }
+  return grid;
+};
+
+export const reCreateGrid = (row_count, col_count, curStartPos, curEndPos) => {
+  const grid = [];
+  for (let row = 0; row < row_count; row++) {
+    const currentRow = [];
+    for (let col = 0; col < col_count; col++) {
+      currentRow.push({
+        col,
+        row,
+        isStart: row === curStartPos[0] && col === curStartPos[1],
+        isFinish: row === curEndPos[0] && col === curEndPos[1],
+        distance: Infinity,
+        isVisited: false,
+        isWall: false,
+        previousNode: null,
+        timestamp: Date.now(),
+        f: Infinity,
+        g: Infinity,
+        h: Infinity
+      });
     }
     grid.push(currentRow);
   }
@@ -41,7 +65,7 @@ export const clearGrid = (grid, ROW_COUNT, COL_COUNT) => {
         previousNode: null,
         timestamp: Date.now(),
         f: Infinity,
-        g: Infinity, 
+        g: Infinity,
         h: Infinity
       };
       newGrid[row][col] = newNode;
@@ -95,14 +119,13 @@ export const getNewGridWithStartNodeMove = (
   if (newGrid[row][col].isFinish) return null;
   const node = newGrid[prevStartRow][prevStartCol];
   const newPrevNode = { ...node, isStart: false, timestamp: Date.now() };
-  
-  if (newPrevNode.isWall){
+
+  if (newPrevNode.isWall) {
     document.getElementById(`node-${prevStartRow}-${prevStartCol}`).className =
-    "node node-wall";
-  }
-  else{
+      "node node-wall";
+  } else {
     document.getElementById(`node-${prevStartRow}-${prevStartCol}`).className =
-    "node node-empty";
+      "node node-empty";
   }
   const node2 = newGrid[row][col];
   const newNode = {
@@ -130,13 +153,12 @@ export const getNewGridWithEndNodeMove = (
   if (newGrid[row][col].isStart) return null;
   const node = newGrid[prevStartRow][prevStartCol];
   const newPrevNode = { ...node, isFinish: false, timestamp: Date.now() };
-  if (newPrevNode.isWall){
+  if (newPrevNode.isWall) {
     document.getElementById(`node-${prevStartRow}-${prevStartCol}`).className =
-    "node node-wall";
-  }
-  else{
+      "node node-wall";
+  } else {
     document.getElementById(`node-${prevStartRow}-${prevStartCol}`).className =
-    "node node-empty";
+      "node node-empty";
   }
   const node2 = newGrid[row][col];
   const newNode = {

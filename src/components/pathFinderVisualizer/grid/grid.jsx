@@ -12,7 +12,8 @@ import {
   DFS,
   RECURSIVEMAZE,
   SIMPLEMAZE,
-  RANDOMDFS
+  RANDOMDFS,
+  STAIRCASEMAZE
 } from "../../../context/selectionContext.js";
 import {
   createGrid,
@@ -23,7 +24,8 @@ import {
   START_NODE_ROW,
   FINISH_NODE_ROW,
   START_NODE_COL,
-  FINISH_NODE_COL
+  FINISH_NODE_COL,
+  reCreateGrid
 } from "./gridHelpers";
 
 import moment from "moment";
@@ -31,8 +33,10 @@ import { aStarSearch } from "../../../services/astar.js";
 import { buildRecursiveMaze } from "../../../services/mazes/recursiveMaze.js";
 import { dfsSearch } from "../../../services/dfs.js";
 import { buildSimpleMaze } from "../../../services/mazes/simpleMaze.js";
+import { buildStairCaseMaze } from "../../../services/mazes/staircase.js";
+import { bfsSearch } from "../../../services/bfs.js";
 
-export default class Grid extends Component {
+export default class GridView extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     if (
       prevState.available &&
@@ -43,7 +47,12 @@ export default class Grid extends Component {
         ...prevState,
         COL_COUNT: nextProps.col_count,
         ROW_COUNT: nextProps.row_count,
-        grid: createGrid(nextProps.row_count, nextProps.col_count)
+        grid: reCreateGrid(
+          nextProps.row_count,
+          nextProps.col_count,
+          prevState.curStartPos,
+          prevState.curEndPos
+        )
       };
     } else {
       return prevState;
@@ -107,7 +116,22 @@ export default class Grid extends Component {
     }
   }
 
-  clearPath() {}
+  clearPath() {
+    const { grid } = this.state;
+    for (let row = 0; row < this.state.ROW_COUNT; row++) {
+      for (let col = 0; col < this.state.COL_COUNT; col++) {
+        if (
+          grid[row][col].isVisited &&
+          !grid[row][col].isStart &&
+          !grid[row][col].isFinish
+        ) {
+          grid[row][col].isVisited = !grid[row][col].isVisited;
+          document.getElementById(`node-${row}-${col}`).className =
+            "node node-empty";
+        }
+      }
+    }
+  }
 
   handleMouseDown(row, col, enableVisualize) {
     if (enableVisualize || !this.state.available) return;
@@ -198,12 +222,21 @@ export default class Grid extends Component {
     var visitedNodesInOrder;
     if (
       this.state.curAlgorithm === DIJKSTRA ||
-      this.state.curAlgorithm === ASTAR
+      this.state.curAlgorithm === ASTAR ||
+      this.state.curAlgorithm === BFS
     ) {
       if (this.state.curAlgorithm === DIJKSTRA) {
         visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
       } else if (this.state.curAlgorithm === ASTAR) {
         visitedNodesInOrder = aStarSearch(
+          grid,
+          startNode,
+          finishNode,
+          this.state.ROW_COUNT,
+          this.state.COL_COUNT
+        );
+      } else if (this.state.curAlgorithm === BFS) {
+        visitedNodesInOrder = bfsSearch(
           grid,
           startNode,
           finishNode,
@@ -364,12 +397,20 @@ export default class Grid extends Component {
     /* this.animateShortestPath(shortestPath, toggleEnable); */
   }
 
-  visualizeMaze(toggleMaze) {
-    setTimeout(() => {
-      toggleMaze(null);
-      this.setState({ available: true });
-    }, 1000);
-    return;
+  visualizeBFS(toggleEnable) {
+    const { grid, curStartPos, curEndPos } = this.state;
+    const startNode = grid[curStartPos[0]][curStartPos[1]];
+    const endNode = grid[curEndPos[0]][curEndPos[1]];
+
+    const visitedNodesInOrder = bfsSearch(
+      grid,
+      startNode,
+      endNode,
+      this.state.ROW_COUNT,
+      this.state.COL_COUNT
+    );
+    const shortestPath = getShortestPath(endNode);
+    this.animatePath(visitedNodesInOrder, shortestPath, toggleEnable);
   }
 
   visualizeRecursiveMaze(toggleMaze) {
@@ -426,6 +467,31 @@ export default class Grid extends Component {
     }
   }
 
+  visualizeStairMaze(toggleMaze) {
+    this.setState({ available: false });
+    const { grid } = this.state;
+    const wallNodes = buildStairCaseMaze(
+      grid,
+      this.state.ROW_COUNT,
+      this.state.COL_COUNT
+    );
+
+    for (let i = 0; i < wallNodes.length; i++) {
+      setTimeout(() => {
+        getNewGridWithWallsToggle(grid, wallNodes[i].row, wallNodes[i].col);
+        if (!wallNodes[i].isStart && !wallNodes[i].isFinish) {
+          document.getElementById(
+            `node-${wallNodes[i].row}-${wallNodes[i].col}`
+          ).className = "node node-wall";
+        }
+        if (i === wallNodes.length - 1) {
+          toggleMaze(null);
+          this.setState({ available: true });
+        }
+      }, i * 10);
+    }
+  }
+
   checkState(
     enableVisualize,
     algorithmSelected,
@@ -452,6 +518,13 @@ export default class Grid extends Component {
           this.clearWalls();
           setTimeout(() => {
             this.visualizeSimpleMaze(toggleMaze);
+          }, 10);
+        }, 10);
+      } else if (mazeSelected === STAIRCASEMAZE) {
+        setTimeout(() => {
+          this.clearWalls();
+          setTimeout(() => {
+            this.visualizeStairMaze(toggleMaze);
           }, 10);
         }, 10);
       }
@@ -495,10 +568,6 @@ export default class Grid extends Component {
             this.visualizeAstar(toggleEnable);
           }
         }, 10);
-      } else if (algorithmSelected === BFS) {
-        setTimeout(() => {
-          toggleEnable();
-        }, 10);
       } else if (algorithmSelected === DFS || algorithmSelected === RANDOMDFS) {
         setTimeout(() => {
           if (this.state.available) {
@@ -519,6 +588,24 @@ export default class Grid extends Component {
             else this.visualizeDFS(toggleEnable, false);
           }
         }, 10);
+      } else if (algorithmSelected === BFS) {
+        setTimeout(() => {
+          if (this.state.available) {
+            if (this.state.computed) {
+              this.clear();
+              this.setState({
+                available: false,
+                curAlgorithm: algorithmSelected
+              });
+            } else {
+              this.setState({
+                available: false,
+                curAlgorithm: algorithmSelected
+              });
+            }
+            this.visualizeBFS(toggleEnable, false);
+          }
+        }, 10);
       } else {
         setTimeout(() => {
           toggleEnable();
@@ -532,13 +619,24 @@ export default class Grid extends Component {
     } else if (clearPath) {
       setTimeout(() => {
         toggleClearPath();
+        this.clearPath();
+        setTimeout(() => {
+          this.setState({
+            available: true,
+            curAlgorithm: algorithmSelected,
+            computed: false
+          });
+        }, 10);
       }, 10);
     } else if (clearWalls) {
       setTimeout(() => {
         toggleClearWalls();
         this.clearWalls();
         console.log("DASD", this.state.curAlgorithm);
-        if (this.state.curAlgorithm != null && this.state.curAlgorithm != "") {
+        if (
+          this.state.curAlgorithm !== null &&
+          this.state.curAlgorithm !== ""
+        ) {
           this.setState({}, () => {
             this.reCalculateGrid();
           });
